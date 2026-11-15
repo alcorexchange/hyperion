@@ -3,6 +3,7 @@ import { cargo } from "async";
 import { Collection } from "mongodb";
 import { IPermission } from "../../interfaces/table-permissions.js";
 import { Synchronizer } from "./synchronizer.js";
+import { isEmOrEdKey } from "../../indexer/helpers/common_functions.js";
 
 export class PermissionsSynchronizer extends Synchronizer<IPermission> {
     private processedScopes: number = 0;
@@ -97,6 +98,9 @@ export class PermissionsSynchronizer extends Synchronizer<IPermission> {
                         for (const perm of info.permissions) {
                             if (perm.required_auth && perm.required_auth.keys && perm.required_auth.keys.length > 0) {
                                 perm.required_auth.keys = perm.required_auth.keys.map((key: any) => {
+                                    if (isEmOrEdKey(key.key)) {
+                                        return { key: key.key, weight: key.weight };
+                                    }
                                     try {
                                         const publicKey = PublicKey.from(key.key);
                                         return {

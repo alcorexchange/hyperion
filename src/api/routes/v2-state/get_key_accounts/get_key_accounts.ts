@@ -1,7 +1,7 @@
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import {timedQuery} from "../../../helpers/functions.js";
 import {getSkipLimit} from "../../v2-history/get_actions/functions.js";
-import {hLog} from "../../../../indexer/helpers/common_functions.js";
+import {hLog, isEmOrEdKey} from "../../../../indexer/helpers/common_functions.js";
 import {PublicKey} from "@wharfkit/antelope";
 import {request as undiciRequest} from "undici";
 
@@ -35,10 +35,15 @@ async function getKeyAccounts(fastify: FastifyInstance, request: FastifyRequest)
     }
 
     try {
-        pubKey = PublicKey.from(public_Key);
-        pubKeyString = pubKey.toString();
-        let chainToken = fastify.manager.config.api.custom_core_token ?? 'EOS';
-        pubKeyLegacy = pubKey.toLegacyString(chainToken || 'EOS');
+        if (isEmOrEdKey(public_Key)) {
+            // alcor-chain: no legacy form; must be the node's form (PUB_EM_04…) to match the indexed permissions
+            pubKeyString = public_Key;
+        } else {
+            pubKey = PublicKey.from(public_Key);
+            pubKeyString = pubKey.toString();
+            let chainToken = fastify.manager.config.api.custom_core_token ?? 'EOS';
+            pubKeyLegacy = pubKey.toLegacyString(chainToken || 'EOS');
+        }
     } catch (e: any) {
         hLog(e.message);
         invalidKey();

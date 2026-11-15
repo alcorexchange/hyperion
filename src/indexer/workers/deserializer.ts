@@ -332,7 +332,9 @@ export default class MainDSWorker extends HyperionWorker {
                         valid = this.filters.action_whitelist.size === 0;
 
                         try {
-                            const unpacked_trx = PackedTransaction.from(trx.trx[1]).getTransaction();
+                            // alcor-chain: drop the signatures, only the actions are needed here and
+                            // @wharfkit/antelope throws on EM/ED signatures (filters would skip the trx)
+                            const unpacked_trx = PackedTransaction.from({...trx.trx[1], signatures: []}).getTransaction();
                             for (const act of unpacked_trx.actions) {
 
                                 if (this.filters.action_blacklist.size > 0 && this.checkBlacklist(act)) {

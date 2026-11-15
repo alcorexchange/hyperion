@@ -366,6 +366,14 @@ export function checkFilter(filter: RequestFilter, _source: any) {
     }
 }
 
+/**
+ * alcor-chain: EM (MetaMask) and ED (Solana) public keys, `PUB_EM_…` / `PUB_ED_…`. @wharfkit/antelope knows only
+ * K1/R1/WA and throws on them; the node and the patched abieos print them the same way, so they are used as is.
+ */
+export function isEmOrEdKey(key: string): boolean {
+    return key.startsWith('PUB_EM_') || key.startsWith('PUB_ED_');
+}
+
 export function hLog(input: any, ...extra: any[]) {
     let role: string;
     if (process.env.worker_role) {

@@ -1293,7 +1293,8 @@ export function addSharedSchemas(fastify: FastifyInstance) {
         $id: "Signature",
         type: "string",
         description: "String representation of an EOSIO compatible cryptographic signature",
-        pattern: "^SIG_([RK]1|WA)_[1-9A-HJ-NP-Za-km-z]+$",
+        // alcor-chain: also SIG_ED_<base58> and SIG_EM_0x<130 hex>
+        pattern: "^SIG_(([RK]1|WA|ED)_[1-9A-HJ-NP-Za-km-z]+|EM_(0x)?[0-9a-fA-F]{130})$",
         title: "Signature"
     });
 
