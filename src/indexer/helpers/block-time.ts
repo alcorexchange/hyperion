@@ -5,6 +5,11 @@ import {MainSettings} from "../../interfaces/hyperionConfig.js";
 const STOCK_BLOCK_INTERVAL_MS = 500;
 const STOCK_BLOCK_TIMESTAMP_EPOCH_MS = 946684800000;
 
+/** Blocks one producer makes in a row: settings.producer_repetitions, stock 12 when not set. */
+export function producerRepetitions(settings: MainSettings): number {
+    return settings.producer_repetitions ?? 12;
+}
+
 /** The chain's block slot length: settings.block_interval_ms, stock 500 ms when not set. */
 export function blockIntervalMs(settings: MainSettings): number {
     return settings.block_interval_ms ?? STOCK_BLOCK_INTERVAL_MS;

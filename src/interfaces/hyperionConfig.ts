@@ -86,6 +86,8 @@ export interface MainSettings {
     // node-abieos must be built with the same values (src/indexer/helpers/block-time.ts).
     block_interval_ms?: number;
     block_timestamp_epoch_ms?: number;
+    /** blocks a producer makes in a row; stock Antelope 12 */
+    producer_repetitions?: number;
 }
 
 export interface IndexerConfigs {
@@ -394,6 +396,7 @@ export const HyperionSettingsConfigSchema = z.object({
     tiered_index_allocation: TieredIndexAllocationSettingsSchema.optional(),
     block_interval_ms: z.number().int().positive().optional(),
     block_timestamp_epoch_ms: z.number().int().nonnegative().optional(),
+    producer_repetitions: z.number().int().positive().optional(),
 });
 
 // Zod schema for scaling configurations
