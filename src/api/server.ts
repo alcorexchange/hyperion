@@ -34,6 +34,7 @@ import { FastifyMongodbOptions } from '@fastify/mongodb';
 
 import { createContext, runInContext } from 'node:vm';
 import fastifyHttpProxy from '@fastify/http-proxy';
+import { checkAbieosBlockTime } from '../indexer/helpers/block-time.js';
 
 class HyperionApiServer {
   private readonly fastify: FastifyInstance;
@@ -67,6 +68,14 @@ class HyperionApiServer {
 
     this.chain = this.conf.settings.chain;
     process.title = `hyp-${this.chain}-api`;
+
+    // the API decodes action data with abieos too (v1 get_actions)
+    try {
+      checkAbieosBlockTime(this.conf.settings);
+    } catch (e: any) {
+      hLog(`[FATAL ERROR] ${e.message}`);
+      process.exit(1);
+    }
 
     this.manager = new ConnectionManager(cm);
     this.manager.calculateServerHash();

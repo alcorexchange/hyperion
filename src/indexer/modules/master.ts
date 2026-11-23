@@ -44,6 +44,7 @@ import { HyperionQueueMonitor } from './queueMonitor.js';
 
 import Timeout = NodeJS.Timeout;
 import { IPermission } from '../../interfaces/table-permissions.js';
+import { checkAbieosBlockTime } from '../helpers/block-time.js';
 
 export class HyperionMaster {
     // global configuration
@@ -1488,6 +1489,13 @@ export class HyperionMaster {
 
         if (!this.conf.settings.index_partition_size) {
             hLog(`[FATAL ERROR] settings.index_partition_size is not defined!`);
+            process.exit(1);
+        }
+
+        try {
+            checkAbieosBlockTime(this.conf.settings);
+        } catch (e: any) {
+            hLog(`[FATAL ERROR] ${e.message}`);
             process.exit(1);
         }
 

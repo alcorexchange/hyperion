@@ -82,6 +82,10 @@ export interface MainSettings {
     max_retained_blocks?: number;
     es_replicas: number;
     tiered_index_allocation?: TieredIndexAllocationSettings;
+    // block slot length and slot-0 time (ms since 1970); stock 500 and 946684800000 (2000-01-01) when not set.
+    // node-abieos must be built with the same values (src/indexer/helpers/block-time.ts).
+    block_interval_ms?: number;
+    block_timestamp_epoch_ms?: number;
 }
 
 export interface IndexerConfigs {
@@ -388,6 +392,8 @@ export const HyperionSettingsConfigSchema = z.object({
     max_retained_blocks: z.number().optional(),
     es_replicas: z.number(),
     tiered_index_allocation: TieredIndexAllocationSettingsSchema.optional(),
+    block_interval_ms: z.number().int().positive().optional(),
+    block_timestamp_epoch_ms: z.number().int().nonnegative().optional(),
 });
 
 // Zod schema for scaling configurations

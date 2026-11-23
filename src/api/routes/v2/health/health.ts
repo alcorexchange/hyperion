@@ -1,6 +1,7 @@
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import {connect} from "amqplib";
 import {timedQuery} from "../../../helpers/functions.js";
+import {blockIntervalMs} from "../../../../indexer/helpers/block-time.js";
 import {
     getFirstIndexedBlock,
     getLastIndexedBlockWithTotalBlocks,
@@ -348,7 +349,7 @@ async function getHealthQuery(fastify: FastifyInstance) {
         const partitionSize = settings.index_partition_size;
         if (partitionSize > 0) {
             const lastIndexedBlock = es.service_data.last_indexed_block;
-            const blockTimeMs = 500;
+            const blockTimeMs = blockIntervalMs(settings);
 
             response.pruning.pruning_check_interval_sec = (partitionSize * blockTimeMs) / 1000;
 

@@ -88,7 +88,9 @@
     "use_global_agent": false,
     "index_partition_size": 10000000,
     "max_retained_blocks": 0,
-    "es_replicas": 0
+    "es_replicas": 0,
+    "block_interval_ms": 500,
+    "block_timestamp_epoch_ms": 946684800000
   },
   "blacklists": {
     "actions": [],

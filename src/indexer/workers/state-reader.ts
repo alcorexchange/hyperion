@@ -6,6 +6,7 @@ import {ABI, API, Bytes, Checksum256, Serializer, UInt32} from '@wharfkit/antelo
 import {HyperionWorker} from './hyperionWorker.js';
 import {debugLog, hLog} from '../helpers/common_functions.js';
 import {RabbitQueueDef} from '../definitions/index-queues.js';
+import {blockIntervalMs} from '../helpers/block-time.js';
 
 interface RequestRange {
     first_block: number;
@@ -527,7 +528,7 @@ export default class StateReader extends HyperionWorker {
         }
         this.forkHandlingTimeout = setTimeout(() => {
             this.removeForkedBlocks().catch(console.error);
-        }, 13 * 500); // wait for a full round to remove forked blocks
+        }, 13 * blockIntervalMs(this.conf.settings)); // wait 13 blocks before removing forked blocks
     }
 
     private async removeForkedBlocks() {
@@ -583,7 +584,7 @@ export default class StateReader extends HyperionWorker {
         if (pendingList.length > 0) {
             // re-schedule the fork handling
             const lastBlock = pendingList[pendingList.length - 1];
-            const timeToLib = (lastBlock.block_num - this.local_lib) * 500;
+            const timeToLib = (lastBlock.block_num - this.local_lib) * blockIntervalMs(this.conf.settings);
             console.log(`Block ${lastBlock.block_id} is not forked, rescheduling fork handling in ${timeToLib}ms...`);
             setTimeout(() => {
                 this.removeForkedBlocks().catch(console.error);
