@@ -31,6 +31,28 @@ Made with ♥ by [Rio Blocks](https://rioblocks.io/?lang=en)
 
 <div align="center">
 
+## Alcor Chain
+
+This fork indexes [Alcor Chain](https://github.com/alcorexchange/alcor-chain): EM (MetaMask) and ED (Solana) keys,
+200 ms blocks and 30 blocks per producer round. It needs our node-abieos, built with the chain's block time:
+
+```bash
+git clone --recursive https://github.com/alcorexchange/node-abieos
+cd node-abieos && npm install
+npx cmake-js compile --CDEOSIO_BLOCK_INTERVAL_MS=200 --CDEOSIO_BLOCK_TIMESTAMP_EPOCH_MS=1735689600000
+node scripts/copy-module.mjs && npm run build
+EXPECT_BLOCK_INTERVAL_MS=200 EXPECT_BLOCK_TIMESTAMP_EPOCH_MS=1735689600000 npm test
+npm pack                       # eosrio-node-abieos-<version>.tgz
+
+cd ../hyperion
+npm pkg set "dependencies.@eosrio/node-abieos=file:../node-abieos/eosrio-node-abieos-<version>.tgz"
+npm install
+```
+
+In the chain config (`settings`): `"block_interval_ms": 200`, `"block_timestamp_epoch_ms": 1735689600000`,
+`"producer_repetitions": 30`. Hyperion refuses to start when node-abieos was built for another block time.
+The stock npm `@eosrio/node-abieos` does not have the block time options, so the build (`tsc`) fails with it.
+
 ## 📖 [Hyperion Docs - Official Documentation](https://hyperion.docs.eosrio.io)📖
 </div>
 
